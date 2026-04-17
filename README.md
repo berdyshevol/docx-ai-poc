@@ -4,6 +4,34 @@ A React web app that shows a DOCX with a side-panel AI chat. Prompts like "chang
 
 Built against the Upwork POC brief: <https://www.upwork.com/jobs/~022045229390179649961>
 
+## Status
+
+### ✅ Implemented and verified end-to-end
+
+- **Upload .docx → render in-browser** via `@superdoc-dev/react`'s `SuperDocEditor` with its full toolbar (undo/redo, fonts, formatting, tables, lists, track-changes toggles). Renders native OOXML — no HTML intermediate.
+- **Side-panel AI chat** — collapsible, matches the mockup: user bubbles right, assistant turn with ✨ avatar, friendly tool rows (`superdoc_search` → "Search...", `superdoc_edit` → "Editing...", etc.) with ✓ / ⟳ / ⚠ status icons, "What can I change?" input, "Claude Sonnet 4.6" model label.
+- **Python Claude tool-use loop** — `AsyncSuperDocClient` + `choose_tools({"provider": "anthropic"})` (returns native Anthropic schema, no translation) + `dispatch_superdoc_tool_async` wired into a bounded iterative loop with `get_system_prompt()` guiding the model. All 9 SuperDoc LLM tools available to Claude.
+- **SSE streaming of tool events** — `tool_start` / `tool_end` / `assistant_text` / `done` pushed to the chat panel in real time as Claude works.
+- **DOCX round-trip** — `doc.save({"inPlace": True})` on completion, frontend fetches updated bytes, editor re-renders. Verified: prompt "change title to Hello" → `superdoc_get_content` + `superdoc_edit` → on-disk XML updated → editor shows "Hello".
+- **Per-session key input UX** — password field on the landing page, stored only in `sessionStorage`, sent per-request as `X-Anthropic-Key` header, never logged or persisted server-side. Server falls back to `ANTHROPIC_API_KEY` from `.env` if header is missing.
+- **Per-session `asyncio.Lock`** so concurrent prompts on the same doc are serialized.
+- **Deploy-ready** — multi-stage Dockerfile (Node build → Python runtime), FastAPI mounts the built frontend at `/` for same-origin deploys. `railway.json` present, repo pushed to GitHub.
+
+### ⏳ Not yet implemented (known gaps)
+
+- **Live public deployment** — Dockerfile + Railway config are in place, but the actual "click deploy on Railway" step is pending on the user (requires browser-based login; instructions below).
+- **Demo video** — deliverable #2 from the brief; not recorded yet.
+- **Automated tests** — no `pytest` for the agent loop, no CI. Frontend TS `tsc -b` passes but not wired into CI.
+- **Imperative editor reload** — current implementation remounts the editor via a `key={reloadKey}` bump, which throws away undo history and cursor position. Should switch to a `ref.loadDocument(bytes)` API if/when SuperDoc exposes one.
+- **Download edited .docx button** — backend serves `GET /session/{id}/doc`, but no UI button for the user to download the result. Currently only reachable via DevTools or reload trigger.
+- **Abort / cancel mid-prompt** — once a prompt is sent, you wait it out. No stop button, no client-side `AbortController` on the fetch.
+- **Session persistence / TTL** — sessions live in memory + on-disk under `.sessions/`. No cleanup on process restart, no TTL, no limit on accumulated docs. Fine for a single-user POC, not for multi-tenant production.
+- **Multi-user auth** — zero auth. Anyone hitting the deployed URL can create sessions. Acceptable for a demo with a single user's pasted API key, but flag it when sharing the link.
+- **Streaming assistant text token-by-token** — currently streamed at the content-block level (whole text block per event). Token streaming would require wiring the Anthropic streaming API (`messages.stream` instead of `messages.create`).
+- **Track-changes / suggesting mode** — SuperDoc supports `documentMode="suggesting"` but this POC uses `"editing"` only. Would be a natural next step for a review/collaboration workflow.
+- **Error UI polish** — SSE disconnect, 401 on bad key, network drop: currently surfaces as console errors + a terse in-bubble text. No toast system, no retry affordance.
+- **Rate-limit / cost guardrails** — no per-session token budget, no Anthropic rate-limit backoff beyond the SDK default.
+
 ## Stack
 
 - **Frontend**: Vite + React 19 + TypeScript, [`@superdoc-dev/react`](https://docs.superdoc.dev/getting-started/frameworks/react) for the editor
