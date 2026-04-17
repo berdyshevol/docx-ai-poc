@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vite/
+.DS_Store
+
+# server
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+server/.sessions/
