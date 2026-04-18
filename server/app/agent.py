@@ -48,7 +48,10 @@ async def run_agent(
     tools = choose_tools({"provider": "anthropic"})["tools"]
     system_prompt = get_system_prompt()
 
-    async with AsyncSuperDocClient() as client:
+    async with AsyncSuperDocClient(
+        startup_timeout_ms=30_000,
+        watchdog_timeout_ms=60_000,
+    ) as client:
         doc = await client.open({"doc": str(doc_path)})
         try:
             messages: list[dict[str, Any]] = [{"role": "user", "content": prompt}]

@@ -19,7 +19,7 @@ Built against the Upwork POC brief: <https://www.upwork.com/jobs/~02204522939017
 
 ### ⏳ Not yet implemented (known gaps)
 
-- **Live public deployment** — Dockerfile + Railway config are in place, but the actual "click deploy on Railway" step is pending on the user (requires browser-based login; instructions below).
+- **Tuned for tiny-instance deploys** — on Render free-plan (0.1 CPU, 512 MB), the SuperDoc native CLI subprocess startup occasionally exceeds the SDK's default 5-second watchdog. Bumped `startup_timeout_ms=30_000` and `watchdog_timeout_ms=60_000` on `AsyncSuperDocClient`. For production, keep a single long-lived client across requests instead of per-request spawn.
 - **Demo video** — deliverable #2 from the brief; not recorded yet.
 - **Automated tests** — no `pytest` for the agent loop, no CI. Frontend TS `tsc -b` passes but not wired into CI.
 - **Imperative editor reload** — current implementation remounts the editor via a `key={reloadKey}` bump, which throws away undo history and cursor position. Should switch to a `ref.loadDocument(bytes)` API if/when SuperDoc exposes one.
