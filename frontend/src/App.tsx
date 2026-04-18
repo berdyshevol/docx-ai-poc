@@ -145,7 +145,11 @@ export default function App() {
             </li>
             <li>
               Side-panel AI chat with live tool rows (<code>Search…</code>,{" "}
-              <code>Editing…</code>, ✓ / ⟳ / ⚠) streamed over SSE
+              <code>Editing…</code>, ✓ / ⚠) streamed over SSE
+            </li>
+            <li>
+              Bouncing typing-dots while waiting for Claude; CSS spinner on
+              each in-flight tool
             </li>
             <li>
               Python server runs a Claude <code>claude-sonnet-4-6</code>{" "}
@@ -156,11 +160,28 @@ export default function App() {
               <code>doc.save()</code> → editor reloads with the new content
             </li>
             <li>
+              Conversation memory across turns — Claude sees prior messages, so
+              "replace title with variant 2" works
+            </li>
+            <li>
+              <b>New chat</b> button clears server history and starts fresh
+              without re-uploading
+            </li>
+            <li>
+              Direct UI edits preserved: the editor's current state is PUT to
+              the server before each prompt
+            </li>
+            <li>
               API key pasted in the browser only, sent as{" "}
               <code>X-Anthropic-Key</code> header, never persisted server-side
             </li>
             <li>
-              Multi-stage <code>Dockerfile</code> for one-URL Railway / Render deploy
+              Viewport-pinned layout — doc and chat scroll independently, input
+              always visible
+            </li>
+            <li>
+              Multi-stage <code>Dockerfile</code> for one-URL Render / Railway
+              deploy
             </li>
             <li>
               Live demo deployed on Render:{" "}
@@ -185,7 +206,11 @@ export default function App() {
             </li>
             <li>Download-edited-<code>.docx</code> button in the UI</li>
             <li>Abort / cancel mid-prompt</li>
-            <li>Session TTL, auth, rate-limit guardrails (single-user POC)</li>
+            <li>
+              Persistent history &amp; session TTL (in-memory only; server
+              restart wipes everything)
+            </li>
+            <li>Multi-user auth, rate-limit guardrails</li>
             <li>Token-by-token text streaming (currently block-level)</li>
             <li>Track-changes / suggesting mode</li>
           </ul>
