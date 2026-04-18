@@ -99,6 +99,71 @@ export default function App() {
             <p className="warn">Key should start with <code>sk-ant-</code>.</p>
           )}
         </div>
+
+        <div className="status-card">
+          <h2>What's in this POC</h2>
+
+          <h3 className="status-h good">✅ Implemented &amp; verified</h3>
+          <ul>
+            <li>
+              Upload <code>.docx</code> → render via <code>@superdoc-dev/react</code>{" "}
+              with full toolbar (native OOXML, not HTML)
+            </li>
+            <li>
+              Side-panel AI chat with live tool rows (<code>Search…</code>,{" "}
+              <code>Editing…</code>, ✓ / ⟳ / ⚠) streamed over SSE
+            </li>
+            <li>
+              Python server runs a Claude <code>claude-sonnet-4-6</code>{" "}
+              tool-use loop with all 9 SuperDoc LLM tools
+            </li>
+            <li>
+              DOCX round-trip: prompt → <code>superdoc_edit</code> →{" "}
+              <code>doc.save()</code> → editor reloads with the new content
+            </li>
+            <li>
+              API key pasted in the browser only, sent as{" "}
+              <code>X-Anthropic-Key</code> header, never persisted server-side
+            </li>
+            <li>
+              Multi-stage <code>Dockerfile</code> for one-URL Railway deploy
+            </li>
+          </ul>
+
+          <h3 className="status-h todo">⏳ Not yet implemented</h3>
+          <ul>
+            <li>Live public deploy (Docker is ready, Railway click pending)</li>
+            <li>Demo video (Upwork deliverable #2)</li>
+            <li>Automated tests / CI</li>
+            <li>
+              Imperative editor reload (currently remount-via-<code>key</code>;
+              loses undo history)
+            </li>
+            <li>Download-edited-<code>.docx</code> button in the UI</li>
+            <li>Abort / cancel mid-prompt</li>
+            <li>Session TTL, auth, rate-limit guardrails (single-user POC)</li>
+            <li>Token-by-token text streaming (currently block-level)</li>
+            <li>Track-changes / suggesting mode</li>
+          </ul>
+
+          <p className="status-links">
+            <a
+              href="https://github.com/berdyshevol/docx-ai-poc"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub source
+            </a>
+            {" · "}
+            <a
+              href="https://github.com/berdyshevol/docx-ai-poc/blob/main/FEEDBACK.md"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              SuperDoc engineer feedback
+            </a>
+          </p>
+        </div>
       </div>
     );
   }

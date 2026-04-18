@@ -23,10 +23,13 @@ body,
 }
 
 .landing {
-  height: 100%;
-  display: grid;
-  place-items: center;
-  padding: 24px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 48px 24px;
+  gap: 20px;
 }
 .landing-card {
   background: var(--panel);
@@ -127,6 +130,62 @@ body,
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+.status-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 28px;
+  max-width: 560px;
+  width: 100%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+.status-card h2 {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.status-h {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+  letter-spacing: 0.02em;
+}
+.status-h.good {
+  color: #10b981;
+}
+.status-h.todo {
+  color: #b45309;
+}
+.status-card ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.55;
+}
+.status-card li {
+  margin-bottom: 4px;
+}
+.status-card code {
+  background: #f1f1f5;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.status-links {
+  margin: 18px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.status-links a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.status-links a:hover {
+  text-decoration: underline;
 }
 
 .key-reset {
