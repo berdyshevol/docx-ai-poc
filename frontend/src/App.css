@@ -102,35 +102,26 @@ body,
   background: #c7c7d1;
   cursor: not-allowed;
 }
-.file-label {
+.file-button {
   display: block;
+  width: 100%;
   background: var(--accent);
   color: white;
+  border: none;
   border-radius: 10px;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
+  font-weight: 500;
   text-align: center;
   cursor: pointer;
-  font-weight: 500;
   transition: background 0.15s;
-  position: relative;
 }
-.file-label:hover {
+.file-button:hover:not(:disabled) {
   background: #6b4cf0;
 }
-.file-label.disabled {
+.file-button:disabled {
   background: #c7c7d1;
   cursor: not-allowed;
-  pointer-events: none;
-}
-.file-label input[type="file"] {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 1;
 }
 
 .status-card {

@@ -4,6 +4,8 @@ import { DocPane, type DocPaneHandle } from "./components/DocPane";
 import { ChatPane } from "./components/ChatPane";
 import "./App.css";
 
+const KEY_PREFIX = "sk-ant-";
+
 const KEY_STORAGE = "anthropic_api_key";
 
 export default function App() {
@@ -16,6 +18,7 @@ export default function App() {
     () => sessionStorage.getItem(KEY_STORAGE) ?? "",
   );
   const docRef = useRef<DocPaneHandle>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (apiKey) sessionStorage.setItem(KEY_STORAGE, apiKey);
@@ -64,8 +67,16 @@ export default function App() {
   }
 
   if (!sessionId || !file) {
-    const keyValid = apiKey.trim().startsWith("sk-ant-");
+    const keyValid = apiKey.trim().startsWith(KEY_PREFIX);
     const canUpload = keyValid && !uploading;
+
+    function openFilePicker() {
+      if (!canUpload) return;
+      const input = fileInputRef.current;
+      if (!input) return;
+      input.value = "";
+      input.click();
+    }
     return (
       <div className="landing">
         <div className="landing-card">
@@ -103,18 +114,21 @@ export default function App() {
             header; the server never persists it.
           </p>
 
-          <label
-            className={`file-label ${canUpload ? "" : "disabled"}`}
-            aria-disabled={!canUpload}
+          <button
+            type="button"
+            className="file-button"
+            disabled={!canUpload}
+            onClick={openFilePicker}
           >
             {uploading ? "Uploading..." : "Choose .docx"}
-            <input
-              type="file"
-              accept=".docx"
-              onChange={onPickFile}
-              disabled={!canUpload}
-            />
-          </label>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".docx"
+            onChange={onPickFile}
+            hidden
+          />
           {!keyValid && apiKey.length > 0 && (
             <p className="warn">Key should start with <code>sk-ant-</code>.</p>
           )}
