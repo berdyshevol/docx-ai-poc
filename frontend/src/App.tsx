@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { uploadDoc, fetchDoc } from "./api";
-import { DocPane } from "./components/DocPane";
+import { useEffect, useRef, useState } from "react";
+import { uploadDoc, fetchDoc, replaceDoc } from "./api";
+import { DocPane, type DocPaneHandle } from "./components/DocPane";
 import { ChatPane } from "./components/ChatPane";
 import "./App.css";
 
@@ -15,6 +15,7 @@ export default function App() {
   const [apiKey, setApiKey] = useState<string>(
     () => sessionStorage.getItem(KEY_STORAGE) ?? "",
   );
+  const docRef = useRef<DocPaneHandle>(null);
 
   useEffect(() => {
     if (apiKey) sessionStorage.setItem(KEY_STORAGE, apiKey);
@@ -34,6 +35,13 @@ export default function App() {
     } finally {
       setUploading(false);
     }
+  }
+
+  async function syncDocToServer() {
+    if (!sessionId) return;
+    const blob = await docRef.current?.exportDocx();
+    if (!blob) return;
+    await replaceDoc(sessionId, blob);
   }
 
   async function refreshDoc() {
@@ -201,12 +209,13 @@ export default function App() {
             Reset key
           </button>
         </div>
-        <DocPane file={file} reloadKey={reloadKey} />
+        <DocPane ref={docRef} file={file} reloadKey={reloadKey} />
       </main>
       {chatOpen && (
         <ChatPane
           sessionId={sessionId}
           apiKey={apiKey}
+          onBeforePrompt={syncDocToServer}
           onDocChanged={refreshDoc}
           onClose={() => setChatOpen(false)}
         />

@@ -36,6 +36,22 @@ def get_doc(session_id: str):
     )
 
 
+@router.put("/session/{session_id}/doc")
+async def replace_doc(session_id: str, file: UploadFile = File(...)):
+    """Overwrite the session .docx with the client's current editor state.
+
+    Called before each chat prompt so Claude works on what the user actually sees,
+    not the original upload.
+    """
+    sess = sessions.get(session_id)
+    if sess is None:
+        raise HTTPException(status_code=404, detail="Unknown session")
+    data = await file.read()
+    async with sess.lock:
+        sess.path.write_bytes(data)
+    return {"ok": True, "bytes": len(data)}
+
+
 class ChatRequest(BaseModel):
     prompt: str
 

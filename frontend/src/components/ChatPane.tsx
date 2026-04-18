@@ -6,11 +6,18 @@ import { ToolUseRow } from "./ToolUseRow";
 interface Props {
   sessionId: string;
   apiKey: string;
+  onBeforePrompt?: () => Promise<void>;
   onDocChanged: () => void;
   onClose: () => void;
 }
 
-export function ChatPane({ sessionId, apiKey, onDocChanged, onClose }: Props) {
+export function ChatPane({
+  sessionId,
+  apiKey,
+  onBeforePrompt,
+  onDocChanged,
+  onClose,
+}: Props) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -31,6 +38,12 @@ export function ChatPane({ sessionId, apiKey, onDocChanged, onClose }: Props) {
       done: false,
     };
     setTurns((t) => [...t, userTurn, assistantTurn]);
+
+    try {
+      await onBeforePrompt?.();
+    } catch (err) {
+      console.error("Failed to sync editor state to server", err);
+    }
 
     const toolMap = new Map<string, ToolEvent>();
     const bumpAssistant = (mut: (a: AssistantTurn) => AssistantTurn) => {

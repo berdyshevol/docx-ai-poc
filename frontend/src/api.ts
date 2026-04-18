@@ -16,6 +16,17 @@ export async function fetchDoc(sessionId: string): Promise<Blob> {
   return res.blob();
 }
 
+/** Replace the session's server-side .docx with the client's current editor state. */
+export async function replaceDoc(sessionId: string, blob: Blob): Promise<void> {
+  const form = new FormData();
+  form.append("file", blob, "doc.docx");
+  const res = await fetch(`${API_BASE}/session/${sessionId}/doc`, {
+    method: "PUT",
+    body: form,
+  });
+  if (!res.ok) throw new Error(`Replace doc failed: ${res.status}`);
+}
+
 export interface ChatStreamHandlers {
   onEvent: (event: string, data: string) => void;
   onError?: (err: unknown) => void;
