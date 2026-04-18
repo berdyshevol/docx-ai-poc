@@ -28,10 +28,10 @@ Paste your own Anthropic API key on the landing page (stored only in `sessionSto
 - **Per-session `asyncio.Lock`** so concurrent prompts on the same doc can't race.
 - **Tuned for tiny-instance deploys** — `AsyncSuperDocClient` instantiated with `startup_timeout_ms=30_000` and `watchdog_timeout_ms=60_000`; sufficient for Render free-plan (0.1 CPU, 512 MB).
 - **Deploy-ready, deployed** — multi-stage Dockerfile (Node build → Python runtime), FastAPI mounts the built frontend at `/` for same-origin deploys. `render.yaml` Blueprint + `railway.json` both included. Live on Render at the URL above.
+- **Demo video recorded** — deliverable #2 from the brief.
 
 ### ⏳ Not yet implemented (known gaps)
 
-- **Demo video** — deliverable #2 from the brief; not recorded yet.
 - **Automated tests / CI** — no `pytest` for the agent loop, no CI pipeline. Frontend `tsc -b` passes but isn't wired into CI.
 - **Imperative editor reload** — current implementation remounts the editor via a `key={reloadKey}` bump, which throws away undo history and cursor position. Should switch to a `ref.loadDocument(bytes)` API if/when SuperDoc exposes one.
 - **Download edited `.docx` button** — backend serves `GET /session/{id}/doc`, but no UI button for the user to download the result.

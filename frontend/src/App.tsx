@@ -194,11 +194,11 @@ export default function App() {
                 docx-ai-poc.onrender.com
               </a>
             </li>
+            <li>Demo video recorded (Upwork deliverable #2)</li>
           </ul>
 
           <h3 className="status-h todo">⏳ Not yet implemented</h3>
           <ul>
-            <li>Demo video (Upwork deliverable #2)</li>
             <li>Automated tests / CI</li>
             <li>
               Imperative editor reload (currently remount-via-<code>key</code>;
