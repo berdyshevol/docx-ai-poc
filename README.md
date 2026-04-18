@@ -62,14 +62,24 @@ Open <http://localhost:5173>, paste your Anthropic API key on the landing page (
 - "Make the first paragraph bold"
 - "Add a bullet list with three items below the title"
 
-## Deploy to Railway
+## Deploy
 
-The repo ships with a multi-stage `Dockerfile` that builds the frontend and bundles it into the Python image. FastAPI serves the built static files at `/` and the API at `/session`, `/chat/{id}`, etc.
+The repo ships with a multi-stage `Dockerfile` that builds the frontend and bundles it into the Python image. FastAPI serves the built static files at `/` and the API at `/session`, `/chat/{id}`, etc. — so one URL, no CORS config needed.
 
-1. Push this repo to GitHub.
-2. On [railway.com](https://railway.com), "New Project" → "Deploy from GitHub repo" → pick this repo.
-3. Railway auto-detects the `Dockerfile` and builds. No env vars are required if users will paste their key in the UI. If you want a fallback key server-side, set `ANTHROPIC_API_KEY` under Variables.
-4. Open the generated `*.up.railway.app` URL.
+### Render (Blueprint — easiest)
+
+`render.yaml` in the repo root declares a single web service with the Dockerfile, health check, and port. On [Render](https://dashboard.render.com/blueprints):
+
+1. **New → Blueprint** → connect the GitHub repo **`berdyshevol/docx-ai-poc`**.
+2. Render reads `render.yaml` and creates the `docx-ai-poc` web service on the free plan.
+3. (Optional) set `ANTHROPIC_API_KEY` in the service's **Environment** tab for a server-side fallback. Not required — users can paste their key in the UI.
+4. Wait ~3 min for the Docker build. Visit the `*.onrender.com` URL.
+
+> **Free tier note:** services spin down after 15 minutes of inactivity and the next request takes ~30 seconds to cold-start. Upgrade to Starter ($7/mo) for always-on.
+
+### Railway
+
+Also supported. `railway.json` is in the repo root. On [railway.com](https://railway.com): **New Project → Deploy from GitHub repo → pick this repo**. Railway auto-detects the `Dockerfile`. Same optional `ANTHROPIC_API_KEY` env var.
 
 ## Architecture
 
