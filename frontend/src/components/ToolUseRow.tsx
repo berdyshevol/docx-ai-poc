@@ -17,12 +17,16 @@ export function toolLabel(name: string): string {
 }
 
 export function ToolUseRow({ event }: { event: ToolEvent }) {
-  const icon =
-    event.status === "done" ? "✓" : event.status === "error" ? "⚠" : "⟳";
   const cls = `tool-row tool-${event.status}`;
   return (
     <div className={cls}>
-      <span className="tool-icon">{icon}</span>
+      {event.status === "running" ? (
+        <span className="spinner" aria-hidden="true" />
+      ) : (
+        <span className="tool-icon">
+          {event.status === "done" ? "✓" : "⚠"}
+        </span>
+      )}
       <span className="tool-label">{toolLabel(event.name)}</span>
     </div>
   );
