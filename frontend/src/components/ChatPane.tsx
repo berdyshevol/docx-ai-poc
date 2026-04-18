@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { AssistantTurn, ToolEvent, Turn } from "../types";
-import { streamChat } from "../api";
+import { streamChat, resetHistory } from "../api";
 import { ToolUseRow } from "./ToolUseRow";
 
 interface Props {
@@ -104,13 +104,33 @@ export function ChatPane({
     onDocChanged();
   }
 
+  async function newChat() {
+    if (busy) return;
+    try {
+      await resetHistory(sessionId);
+    } catch (err) {
+      console.error("Failed to reset server history", err);
+    }
+    setTurns([]);
+  }
+
   return (
     <aside className="chat-pane">
       <header className="chat-header">
         <span className="chat-title">✨ AI Chat</span>
-        <button className="chat-close" onClick={onClose} aria-label="Close chat">
-          ×
-        </button>
+        <div className="chat-header-actions">
+          <button
+            className="chat-new"
+            onClick={newChat}
+            disabled={busy || turns.length === 0}
+            title="Start a new chat (clears Claude's memory of this conversation)"
+          >
+            New chat
+          </button>
+          <button className="chat-close" onClick={onClose} aria-label="Close chat">
+            ×
+          </button>
+        </div>
       </header>
 
       <div className="chat-scroll">

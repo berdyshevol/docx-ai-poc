@@ -68,7 +68,18 @@ async def chat(
 
     async def event_stream():
         async with sess.lock:
-            async for event in run_agent(sess.path, body.prompt, x_anthropic_key):
+            async for event in run_agent(sess, body.prompt, x_anthropic_key):
                 yield event
 
     return EventSourceResponse(event_stream())
+
+
+@router.post("/session/{session_id}/reset")
+async def reset_history(session_id: str):
+    """Clear the Claude conversation history for this session (new chat)."""
+    sess = sessions.get(session_id)
+    if sess is None:
+        raise HTTPException(status_code=404, detail="Unknown session")
+    async with sess.lock:
+        sess.messages = []
+    return {"ok": True}

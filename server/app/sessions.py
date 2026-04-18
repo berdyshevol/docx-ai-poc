@@ -5,6 +5,7 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from threading import Lock
+from typing import Any
 
 SESSIONS_DIR = Path(__file__).resolve().parent.parent / ".sessions"
 SESSIONS_DIR.mkdir(exist_ok=True)
@@ -15,6 +16,10 @@ class Session:
     id: str
     path: Path
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
+    # Running Claude conversation history for this session.
+    # Each entry is an Anthropic message dict: {role, content}.
+    # Grows across /chat requests; reset only on new session.
+    messages: list[dict[str, Any]] = field(default_factory=list)
 
 
 _sessions: dict[str, Session] = {}

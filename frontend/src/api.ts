@@ -16,6 +16,14 @@ export async function fetchDoc(sessionId: string): Promise<Blob> {
   return res.blob();
 }
 
+/** Clear the Claude conversation history on the server for this session. */
+export async function resetHistory(sessionId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/session/${sessionId}/reset`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error(`Reset history failed: ${res.status}`);
+}
+
 /** Replace the session's server-side .docx with the client's current editor state. */
 export async function replaceDoc(sessionId: string, blob: Blob): Promise<void> {
   const form = new FormData();

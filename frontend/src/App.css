@@ -307,6 +307,28 @@ body,
   cursor: pointer;
   color: var(--muted);
 }
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.chat-new {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.chat-new:hover:not(:disabled) {
+  background: #f1f1f5;
+  color: var(--text);
+}
+.chat-new:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
 .chat-scroll {
   flex: 1 1 0;

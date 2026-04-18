@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
 from typing import Any, AsyncIterator
 
 from anthropic import AsyncAnthropic
@@ -14,9 +13,22 @@ from superdoc import (
     get_system_prompt,
 )
 
+from .sessions import Session
+
 MODEL = "claude-sonnet-4-6"
 MAX_ITERATIONS = 8
 MAX_TOKENS = 4096
+
+
+def _serialize_content(blocks: Any) -> list[dict[str, Any]]:
+    """Convert Anthropic response content blocks to plain dicts for history storage."""
+    out: list[dict[str, Any]] = []
+    for b in blocks:
+        if hasattr(b, "model_dump"):
+            out.append(b.model_dump())
+        else:
+            out.append(b)  # already a dict
+    return out
 
 
 def _sse(event: str, payload: dict[str, Any]) -> dict[str, str]:
@@ -34,7 +46,9 @@ def _result_for_anthropic(result: Any, limit: int = 8000) -> str:
 
 
 async def run_agent(
-    doc_path: Path, prompt: str, api_key: str | None = None
+    session: Session,
+    prompt: str,
+    api_key: str | None = None,
 ) -> AsyncIterator[dict]:
     key = api_key or os.environ.get("ANTHROPIC_API_KEY")
     if not key:
@@ -48,14 +62,17 @@ async def run_agent(
     tools = choose_tools({"provider": "anthropic"})["tools"]
     system_prompt = get_system_prompt()
 
+    # Start from the session's prior history + this turn's user prompt.
+    # We mutate a local copy; only commit back to session.messages on success.
+    messages: list[dict[str, Any]] = list(session.messages)
+    messages.append({"role": "user", "content": prompt})
+
     async with AsyncSuperDocClient(
         startup_timeout_ms=30_000,
         watchdog_timeout_ms=60_000,
     ) as client:
-        doc = await client.open({"doc": str(doc_path)})
+        doc = await client.open({"doc": str(session.path)})
         try:
-            messages: list[dict[str, Any]] = [{"role": "user", "content": prompt}]
-
             for _ in range(MAX_ITERATIONS):
                 resp = await anthropic.messages.create(
                     model=MODEL,
@@ -68,6 +85,11 @@ async def run_agent(
                 for block in resp.content:
                     if block.type == "text" and block.text:
                         yield _sse("assistant_text", {"text": block.text})
+
+                # Always record the assistant turn in history (even on final end_turn).
+                messages.append(
+                    {"role": "assistant", "content": _serialize_content(resp.content)}
+                )
 
                 if resp.stop_reason != "tool_use":
                     break
@@ -120,10 +142,12 @@ async def run_agent(
                             },
                         )
 
-                messages.append({"role": "assistant", "content": resp.content})
                 messages.append({"role": "user", "content": tool_results})
 
             await doc.save({"inPlace": True})
+            # Commit the updated conversation back to the session so the next
+            # prompt can reference everything that just happened.
+            session.messages = messages
             yield _sse("done", {"ok": True})
         except Exception as exc:
             yield _sse("error", {"message": f"{type(exc).__name__}: {exc}"})
