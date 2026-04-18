@@ -187,6 +187,43 @@ body,
 .status-links a:hover {
   text-decoration: underline;
 }
+.deploy-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #065f46;
+}
+.deploy-banner .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  display: inline-block;
+}
+.deploy-banner a {
+  color: #065f46;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.deploy-banner a:hover {
+  text-decoration: underline;
+}
+.live-link {
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-decoration: none;
+}
+.live-link:hover {
+  text-decoration: underline;
+}
 
 .key-reset {
   background: transparent;

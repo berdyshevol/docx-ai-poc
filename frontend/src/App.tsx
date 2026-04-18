@@ -66,6 +66,18 @@ export default function App() {
             Paste your Anthropic API key, then upload a <code>.docx</code> to begin.
           </p>
 
+          <div className="deploy-banner">
+            <span className="dot" />
+            Live at{" "}
+            <a
+              href="https://docx-ai-poc.onrender.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              docx-ai-poc.onrender.com
+            </a>
+          </div>
+
           <label className="field">
             <span>Anthropic API key</span>
             <input
@@ -126,13 +138,23 @@ export default function App() {
               <code>X-Anthropic-Key</code> header, never persisted server-side
             </li>
             <li>
-              Multi-stage <code>Dockerfile</code> for one-URL Railway deploy
+              Multi-stage <code>Dockerfile</code> for one-URL Railway / Render deploy
+            </li>
+            <li>
+              Live demo deployed on Render:{" "}
+              <a
+                href="https://docx-ai-poc.onrender.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="live-link"
+              >
+                docx-ai-poc.onrender.com
+              </a>
             </li>
           </ul>
 
           <h3 className="status-h todo">⏳ Not yet implemented</h3>
           <ul>
-            <li>Live public deploy (Docker is ready, Railway click pending)</li>
             <li>Demo video (Upwork deliverable #2)</li>
             <li>Automated tests / CI</li>
             <li>

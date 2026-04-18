@@ -4,6 +4,12 @@ A React web app that shows a DOCX with a side-panel AI chat. Prompts like "chang
 
 Built against the Upwork POC brief: <https://www.upwork.com/jobs/~022045229390179649961>
 
+## 🔗 Live demo
+
+**<https://docx-ai-poc.onrender.com>**
+
+Paste your own Anthropic API key on the landing page (stored only in `sessionStorage`, never on the server), upload a `.docx`, and try prompts like "change the title to Hey!". Hosted on Render's free plan — first request after 15 min idle cold-starts in ~30 s.
+
 ## Status
 
 ### ✅ Implemented and verified end-to-end
