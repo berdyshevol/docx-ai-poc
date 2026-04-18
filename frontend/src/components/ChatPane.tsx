@@ -126,7 +126,14 @@ export function ChatPane({
                 {turn.tools.map((t) => (
                   <ToolUseRow key={t.id} event={t} />
                 ))}
-                {!turn.done && (
+                {!turn.done && turn.tools.length === 0 && !turn.text && (
+                  <div className="typing-dots" aria-label="Waiting for Claude">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                )}
+                {!turn.done && (turn.tools.length > 0 || turn.text) && (
                   <div className="tool-row tool-running">
                     <span className="spinner" aria-hidden="true" />
                     <span className="tool-label">Thinking...</span>
