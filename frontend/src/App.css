@@ -113,6 +113,7 @@ body,
   cursor: pointer;
   font-weight: 500;
   transition: background 0.15s;
+  position: relative;
 }
 .file-label:hover {
   background: #6b4cf0;
@@ -124,13 +125,12 @@ body,
 }
 .file-label input[type="file"] {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
 }
 
 .status-card {
